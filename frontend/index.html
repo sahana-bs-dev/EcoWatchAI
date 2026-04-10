@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoWatch AI | Industrial Emission Monitoring</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ecoGreen: "#2ecc71",
+                        ecoYellow: "#f1c40f",
+                        ecoRed: "#e74c3c",
+                        ecoInk: "#0f172a",
+                        ecoSlate: "#132238"
+                    },
+                    fontFamily: {
+                        display: ["Space Grotesk", "sans-serif"],
+                        body: ["Manrope", "sans-serif"]
+                    }
+                }
+            }
+        };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="https://unpkg.com/vis-network/styles/vis-network.min.css">
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body class="font-body">
+    <div class="min-h-screen app-shell">
+        <main class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+            <section class="hero-layout">
+                <div class="hero-copy">
+                    <p class="eyebrow-line">Industrial Emission Monitoring System</p>
+                    <h1 class="hero-title font-display">EcoWatch AI</h1>
+                    <p class="hero-description">
+                        Monitor AQI in a fictional demo zone, inspect dummy industrial contributors, forecast risk, and flag abnormal pollution spikes.
+                    </p>
+                </div>
+
+                <section class="control-card panel-card">
+                    <p class="panel-kicker">Location</p>
+                    <div class="analyze-row">
+                        <select id="locationSelect" class="form-input hero-select"></select>
+                        <button id="analyzeBtn" class="analyze-btn" type="button">Analyze</button>
+                    </div>
+                    <p class="helper-copy">
+                        Use a suggested dummy location or click the map to inspect another zone.
+                    </p>
+                    <div class="control-grid">
+                        <div>
+                            <label for="radiusSelect" class="form-label">Radius</label>
+                            <select id="radiusSelect" class="form-input">
+                                <option value="5">5 km</option>
+                                <option value="10" selected>10 km</option>
+                                <option value="15">15 km</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="form-label">View</label>
+                            <div class="mini-toggle">
+                                <button id="mapViewBtn" class="toggle-btn active" type="button">Map</button>
+                                <button id="networkViewBtn" class="toggle-btn" type="button">Network</button>
+                            </div>
+                        </div>
+                    </div>
+                    <button id="satelliteToggle" class="secondary-action" type="button">Satellite View: Off</button>
+                </section>
+            </section>
+
+            <div id="alertBanner" class="alert-banner hidden">
+                <div class="alert-wrap">
+                    <span class="alert-chip">Live Alert</span>
+                    <p id="alertBannerText">Monitoring active</p>
+                    <span id="alertBannerMeta">Real-Time Monitoring</span>
+                </div>
+            </div>
+
+            <section class="summary-grid">
+                <article class="stat-card stat-card-primary">
+                    <p class="stat-label">Current AQI</p>
+                    <strong id="currentAqiValue" class="stat-value">--</strong>
+                    <span id="aqiStatus" class="stat-foot">--</span>
+                </article>
+
+                <article class="stat-card">
+                    <p class="stat-label">Compliance</p>
+                    <strong id="globalComplianceValue" class="stat-word">--</strong>
+                    <span class="stat-foot">AQI &gt; 200 warning, AQI &gt; 300 violation</span>
+                </article>
+
+                <article class="stat-card">
+                    <p class="stat-label">AI Alert</p>
+                    <strong id="anomalyBadge" class="stat-word">Normal</strong>
+                    <span id="topPolluterValue" class="stat-foot">Monitoring nearby industries</span>
+                </article>
+            </section>
+
+            <section class="dashboard-grid">
+                <section class="map-stack panel-card">
+                    <div class="map-shell-header">
+                        <div>
+                            <p class="panel-kicker">Dummy World View</p>
+                            <h2 class="section-title font-display">Demo Zone Map</h2>
+                        </div>
+                        <div class="legend-row">
+                            <span><i class="legend-dot high"></i> High</span>
+                            <span><i class="legend-dot moderate"></i> Medium</span>
+                            <span><i class="legend-dot low"></i> Low</span>
+                        </div>
+                    </div>
+
+                    <div id="mapPanel" class="visual-panel">
+                        <div id="map" class="h-[520px] w-full"></div>
+                        <div class="map-overlay-note">Real map view with dummy prototype emission data</div>
+                        <div id="mapFallback" class="map-fallback hidden">
+                            <div class="demo-map-scene">
+                                <div class="scene-ring ring-large"></div>
+                                <div class="scene-ring ring-medium"></div>
+                                <div class="scene-ring ring-small"></div>
+                                <div class="scene-road road-one"></div>
+                                <div class="scene-road road-two"></div>
+                                <div class="zone-pill zone-top">Factory Belt</div>
+                                <div class="zone-pill zone-bottom">Service Corridor</div>
+                                <div class="zone-pill zone-center">Residential Area</div>
+                                <div class="demo-point point-1 high"></div>
+                                <div class="demo-point point-2 moderate"></div>
+                                <div class="demo-point point-3 high"></div>
+                                <div class="demo-point point-4 low"></div>
+                                <div class="demo-point point-5 low"></div>
+                                <div class="demo-point point-6 moderate"></div>
+                                <div class="demo-center-tag">
+                                    <span id="selectedLocationText">Selected zone monitoring active</span>
+                                    <strong>AQI <span id="mapAqiValue">--</span></strong>
+                                </div>
+                                <div class="demo-footer-tag">Fictional demo-world map: marker positions use dummy overlays when Mapbox is unavailable.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="networkPanel" class="visual-panel hidden">
+                        <div id="networkView" class="h-[520px] w-full"></div>
+                    </div>
+                </section>
+
+                <aside class="side-stack">
+                    <section class="panel-card side-card">
+                        <div class="side-card-header">
+                            <div>
+                                <p class="panel-kicker">Nearby Sources</p>
+                                <h2 class="section-title font-display">Industries</h2>
+                            </div>
+                            <span id="nearbyCount" class="pill-count">0 found</span>
+                        </div>
+                        <div id="nearbyIndustryList" class="list-stack"></div>
+                    </section>
+
+                    <section class="panel-card side-card compact-panel">
+                        <p class="panel-kicker">Zone Snapshot</p>
+                        <div class="snapshot-grid">
+                            <div class="data-card">
+                                <span>Predicted AQI</span>
+                                <strong id="predictedAqiValue">--</strong>
+                            </div>
+                            <div class="data-card">
+                                <span>Eco Score</span>
+                                <strong id="ecoScoreValue">--</strong>
+                            </div>
+                            <div class="data-card">
+                                <span>Radius</span>
+                                <strong id="radiusValue">10 km</strong>
+                            </div>
+                        </div>
+                    </section>
+                </aside>
+            </section>
+
+            <section class="lower-grid">
+                <section class="panel-card p-5">
+                    <div class="section-head">
+                        <div>
+                            <p class="panel-kicker">Pollution Analytics</p>
+                            <h2 class="section-title font-display">AQI Forecast</h2>
+                        </div>
+                    </div>
+                    <div class="chart-shell mt-5">
+                        <canvas id="aqiChart" class="chart-canvas"></canvas>
+                    </div>
+                </section>
+
+                <section class="panel-card p-5">
+                    <div class="section-head">
+                        <div>
+                            <p class="panel-kicker">Pollutant Breakdown</p>
+                            <h2 class="section-title font-display">Emission Mix</h2>
+                        </div>
+                    </div>
+                    <div class="chart-shell mt-5">
+                        <canvas id="pollutantChart" class="chart-canvas"></canvas>
+                    </div>
+                </section>
+            </section>
+
+            <section class="lower-grid">
+                <section class="panel-card p-5">
+                    <div class="section-head">
+                        <div>
+                            <p class="panel-kicker">Recommendation System</p>
+                            <h2 class="section-title font-display">AI Guidance</h2>
+                        </div>
+                    </div>
+                    <ul id="recommendationList" class="mt-4 space-y-3 text-sm"></ul>
+                </section>
+
+                <section class="panel-card p-5">
+                    <div class="section-head">
+                        <div>
+                            <p class="panel-kicker">Impact Analysis</p>
+                            <h2 class="section-title font-display">Sensitive Zones</h2>
+                        </div>
+                    </div>
+                    <div id="impactList" class="mt-4 space-y-3"></div>
+                </section>
+            </section>
+
+            <section class="lower-grid">
+                <section class="panel-card p-5">
+                    <div class="section-head">
+                        <div>
+                            <p class="panel-kicker">RAG Intelligence</p>
+                            <h2 class="section-title font-display">Compliance Q&A</h2>
+                        </div>
+                    </div>
+                    <div class="rag-form mt-5">
+                        <textarea id="ragQuestion" class="rag-input" rows="4" placeholder="Ask about compliance, mitigation, anomalies, or recommended action for the selected industry..."></textarea>
+                        <div class="rag-actions">
+                            <button id="ragAskBtn" class="analyze-btn" type="button">Ask EcoWatch</button>
+                        </div>
+                    </div>
+                    <div id="ragAnswer" class="rag-answer mt-4">Ask a question to get grounded compliance guidance.</div>
+                    <div id="ragSources" class="rag-sources mt-4"></div>
+                </section>
+
+                <section class="panel-card p-5">
+                    <div class="section-head">
+                        <div>
+                            <p class="panel-kicker">Retrieved Guidance</p>
+                            <h2 class="section-title font-display">Knowledge Context</h2>
+                        </div>
+                    </div>
+                    <div id="ragPreviewList" class="mt-4 space-y-3"></div>
+                </section>
+            </section>
+
+            <section class="lower-grid final-grid">
+                <section class="panel-card p-5">
+                    <div class="section-head">
+                        <div>
+                            <p class="panel-kicker">Spread Simulation</p>
+                            <h2 class="section-title font-display">Dispersion Range</h2>
+                        </div>
+                    </div>
+                    <div id="spreadBars" class="mt-5 grid gap-3"></div>
+                </section>
+
+                <section class="panel-card p-5">
+                    <div class="section-head">
+                        <div>
+                            <p class="panel-kicker">Industry Ranking</p>
+                            <h2 class="section-title font-display">Top Polluters</h2>
+                        </div>
+                    </div>
+                    <div id="rankingList" class="mt-4 space-y-3"></div>
+                    <div id="complianceList" class="mt-4 space-y-3 hidden"></div>
+                </section>
+            </section>
+        </main>
+    </div>
+
+    <script src="./config.js"></script>
+    <script src="./mock-data.js"></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <script src="./app.js"></script>
+</body>
+</html>

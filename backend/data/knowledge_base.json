@@ -1,0 +1,74 @@
+{
+  "documents": [
+    {
+      "id": "reg-1",
+      "title": "AQI Escalation Bands",
+      "category": "regulation",
+      "industry": "all",
+      "content": "For this EcoWatch AI prototype, AQI below 130 is treated as compliant, AQI from 130 to 199 is a warning band, and AQI 200 or above is a violation band requiring intervention and public risk review."
+    },
+    {
+      "id": "reg-2",
+      "title": "Severe AQI Action Protocol",
+      "category": "protocol",
+      "industry": "all",
+      "content": "When predicted AQI approaches or exceeds 250, operators should reduce production load, intensify stack monitoring, communicate with the control center, and prepare public advisories for nearby houses, schools, hospitals, and transit nodes."
+    },
+    {
+      "id": "steel-1",
+      "title": "Steel Plant Emission Controls",
+      "category": "mitigation",
+      "industry": "ABC Steel Plant",
+      "content": "Steel facilities with elevated PM10 and SO2 should inspect bag filters, sinter dust capture systems, and furnace ventilation. Recommended actions include filter replacement, reduced furnace throughput during peaks, and raw material dust suppression."
+    },
+    {
+      "id": "power-1",
+      "title": "Thermal Power Plant Guidance",
+      "category": "mitigation",
+      "industry": "Thermal Power Plant",
+      "content": "Thermal power units showing high SO2 should prioritize flue gas desulfurization performance checks, fuel sulfur review, and combustion optimization. Output curtailment is recommended when predictive AQI remains elevated."
+    },
+    {
+      "id": "chem-1",
+      "title": "Chemical Plant Anomaly Review",
+      "category": "investigation",
+      "industry": "Chemical Plant",
+      "content": "Chemical facilities with anomaly spikes should inspect vent scrubbers, fugitive leak points, storage transfer events, and emergency flaring logs. Short spikes often indicate abnormal release windows or sensor excursions."
+    },
+    {
+      "id": "refinery-1",
+      "title": "Oil Refinery Response",
+      "category": "mitigation",
+      "industry": "Oil Refinery",
+      "content": "Refineries with high AQI and hydrocarbon-related events should verify flare optimization, sulfur recovery performance, and leak detection rounds. Community-facing alerts should be issued when nearby healthcare or residential zones are affected."
+    },
+    {
+      "id": "cement-1",
+      "title": "Cement Works Dust Strategy",
+      "category": "mitigation",
+      "industry": "Green Cement Works",
+      "content": "Cement plants should control clinker handling dust, inspect electrostatic precipitators, and reduce unloading during windy periods. PM2.5 and PM10 trends are the primary operational watch indicators."
+    },
+    {
+      "id": "health-1",
+      "title": "Sensitive Zone Protection",
+      "category": "impact",
+      "industry": "all",
+      "content": "Schools, hospitals, and dense residential clusters inside the active radius should receive priority notifications. Operational mitigation should be faster when these sensitive receptors are within five kilometers of a high-pollution source."
+    },
+    {
+      "id": "fuel-1",
+      "title": "Cleaner Fuel Switching",
+      "category": "recommendation",
+      "industry": "all",
+      "content": "When sustained high AQI is linked to combustion sources, switching to lower sulfur or cleaner fuel mixes is a preferred mitigation. Fuel switching is especially valuable when SO2 remains persistently above baseline."
+    },
+    {
+      "id": "sensor-1",
+      "title": "Sensor and Satellite Cross-Validation",
+      "category": "operations",
+      "industry": "all",
+      "content": "Operational decisions should combine stack sensor values, area AQI estimates, and satellite heat signatures. A localized anomaly without sensor confirmation should trigger validation checks before declaring a confirmed release event."
+    }
+  ]
+}

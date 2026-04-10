@@ -1,0 +1,9 @@
+{
+  "name": "eco-watch-ai",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "npx http-server frontend -p 3000 -c-1",
+    "serve": "npx http-server frontend -p 3000 -c-1"
+  }
+}

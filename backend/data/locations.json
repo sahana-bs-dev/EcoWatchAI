@@ -1,0 +1,219 @@
+{
+  "map_center": {
+    "lat": 12.2958,
+    "lng": 76.6394
+  },
+  "monitoring_station": {
+    "name": "Central Monitoring Station",
+    "lat": 12.3005,
+    "lng": 76.644
+  },
+  "industries": [
+    {
+      "id": "ind-1",
+      "name": "ABC Steel Plant",
+      "sector": "Steel",
+      "lat": 12.3321,
+      "lng": 76.6762,
+      "sensor_name": "ABC Steel Plant Sensor"
+    },
+    {
+      "id": "ind-2",
+      "name": "Green Cement Works",
+      "sector": "Cement",
+      "lat": 12.3194,
+      "lng": 76.6581,
+      "sensor_name": "Green Cement Works Sensor"
+    },
+    {
+      "id": "ind-3",
+      "name": "Chemical Plant",
+      "sector": "Chemicals",
+      "lat": 12.3126,
+      "lng": 76.6893,
+      "sensor_name": "Chemical Plant Sensor"
+    },
+    {
+      "id": "ind-4",
+      "name": "Thermal Power Plant",
+      "sector": "Power",
+      "lat": 12.2638,
+      "lng": 76.6885,
+      "sensor_name": "Thermal Power Plant Sensor"
+    },
+    {
+      "id": "ind-5",
+      "name": "Oil Refinery",
+      "sector": "Energy",
+      "lat": 12.2529,
+      "lng": 76.6468,
+      "sensor_name": "Oil Refinery Sensor"
+    },
+    {
+      "id": "ind-6",
+      "name": "Textile Industry",
+      "sector": "Textile",
+      "lat": 12.3382,
+      "lng": 76.6161,
+      "sensor_name": "Textile Industry Sensor"
+    },
+    {
+      "id": "ind-7",
+      "name": "Mining Industry",
+      "sector": "Mining",
+      "lat": 12.3444,
+      "lng": 76.6657,
+      "sensor_name": "Mining Industry Sensor"
+    },
+    {
+      "id": "ind-8",
+      "name": "Pharmaceutical Plant",
+      "sector": "Pharma",
+      "lat": 12.2871,
+      "lng": 76.7008,
+      "sensor_name": "Pharmaceutical Plant Sensor"
+    },
+    {
+      "id": "ind-9",
+      "name": "Paper Mill",
+      "sector": "Paper",
+      "lat": 12.2479,
+      "lng": 76.6128,
+      "sensor_name": "Paper Mill Sensor"
+    },
+    {
+      "id": "ind-10",
+      "name": "Food Processing Unit",
+      "sector": "Food",
+      "lat": 12.3275,
+      "lng": 76.5944,
+      "sensor_name": "Food Processing Unit Sensor"
+    }
+  ],
+  "public_areas": [
+    {
+      "name": "Residential Area",
+      "type": "Residential",
+      "lat": 12.3074,
+      "lng": 76.6402,
+      "population": 24000
+    },
+    {
+      "name": "Houses",
+      "type": "Residential",
+      "lat": 12.3137,
+      "lng": 76.6248,
+      "population": 13000
+    },
+    {
+      "name": "Devaraja Market",
+      "type": "Commercial",
+      "lat": 12.3093,
+      "lng": 76.6511,
+      "population": 6800
+    },
+    {
+      "name": "Park",
+      "type": "Recreation",
+      "lat": 12.3148,
+      "lng": 76.6266,
+      "population": 2200
+    },
+    {
+      "name": "School",
+      "type": "Education",
+      "lat": 12.2994,
+      "lng": 76.6199,
+      "population": 1800
+    },
+    {
+      "name": "College",
+      "type": "Education",
+      "lat": 12.3079,
+      "lng": 76.6218,
+      "population": 3500
+    },
+    {
+      "name": "Mall",
+      "type": "Commercial",
+      "lat": 12.2981,
+      "lng": 76.6682,
+      "population": 5200
+    },
+    {
+      "name": "Hospital",
+      "type": "Healthcare",
+      "lat": 12.3059,
+      "lng": 76.6554,
+      "population": 2600
+    },
+    {
+      "name": "Playground",
+      "type": "Recreation",
+      "lat": 12.2875,
+      "lng": 76.6519,
+      "population": 1200
+    },
+    {
+      "name": "Government Office",
+      "type": "Civic",
+      "lat": 12.3126,
+      "lng": 76.6484,
+      "population": 4100
+    },
+    {
+      "name": "Mysore Railway Station",
+      "type": "Transport",
+      "lat": 12.3052,
+      "lng": 76.6559,
+      "population": 9600
+    }
+  ],
+  "roads": [
+    {
+      "name": "Main Road",
+      "coordinates": [
+        [76.593, 12.302],
+        [76.699, 12.302]
+      ]
+    },
+    {
+      "name": "Highway",
+      "coordinates": [
+        [76.604, 12.244],
+        [76.704, 12.342]
+      ]
+    },
+    {
+      "name": "Ring Road",
+      "coordinates": [
+        [76.603, 12.252],
+        [76.692, 12.252],
+        [76.692, 12.339],
+        [76.603, 12.339],
+        [76.603, 12.252]
+      ]
+    },
+    {
+      "name": "Bypass",
+      "coordinates": [
+        [76.59, 12.291],
+        [76.7, 12.291]
+      ]
+    },
+    {
+      "name": "Industrial Road",
+      "coordinates": [
+        [76.625, 12.252],
+        [76.682, 12.333]
+      ]
+    },
+    {
+      "name": "Service Road",
+      "coordinates": [
+        [76.614, 12.268],
+        [76.652, 12.327]
+      ]
+    }
+  ]
+}
