@@ -11,83 +11,93 @@
   "industries": [
     {
       "id": "ind-1",
-      "name": "ABC Steel Plant",
+      "name": "JK Tyre Mysuru Plant",
+      "data_key": "ABC Steel Plant",
       "sector": "Steel",
       "lat": 12.3321,
       "lng": 76.6762,
-      "sensor_name": "ABC Steel Plant Sensor"
+      "sensor_name": "JK Tyre Mysuru Sensor"
     },
     {
       "id": "ind-2",
-      "name": "Green Cement Works",
+      "name": "Nestle India Nanjangud Plant",
+      "data_key": "Green Cement Works",
       "sector": "Cement",
       "lat": 12.3194,
       "lng": 76.6581,
-      "sensor_name": "Green Cement Works Sensor"
+      "sensor_name": "Nestle Nanjangud Sensor"
     },
     {
       "id": "ind-3",
-      "name": "Chemical Plant",
+      "name": "AT&S India Nanjangud",
+      "data_key": "Chemical Plant",
       "sector": "Chemicals",
       "lat": 12.3126,
       "lng": 76.6893,
-      "sensor_name": "Chemical Plant Sensor"
+      "sensor_name": "AT&S Nanjangud Sensor"
     },
     {
       "id": "ind-4",
-      "name": "Thermal Power Plant",
+      "name": "Asian Paints Mysuru Plant",
+      "data_key": "Thermal Power Plant",
       "sector": "Power",
       "lat": 12.2638,
       "lng": 76.6885,
-      "sensor_name": "Thermal Power Plant Sensor"
+      "sensor_name": "Asian Paints Mysuru Sensor"
     },
     {
       "id": "ind-5",
-      "name": "Oil Refinery",
+      "name": "Hitachi Energy Mysuru Facility",
+      "data_key": "Oil Refinery",
       "sector": "Energy",
       "lat": 12.2529,
       "lng": 76.6468,
-      "sensor_name": "Oil Refinery Sensor"
+      "sensor_name": "Hitachi Energy Mysuru Sensor"
     },
     {
       "id": "ind-6",
-      "name": "Textile Industry",
+      "name": "Jubilant Biosys Nanjangud Facility",
+      "data_key": "Textile Industry",
       "sector": "Textile",
       "lat": 12.3382,
       "lng": 76.6161,
-      "sensor_name": "Textile Industry Sensor"
+      "sensor_name": "Jubilant Nanjangud Sensor"
     },
     {
       "id": "ind-7",
-      "name": "Mining Industry",
+      "name": "KSIC Silk Weaving Factory",
+      "data_key": "Mining Industry",
       "sector": "Mining",
       "lat": 12.3444,
       "lng": 76.6657,
-      "sensor_name": "Mining Industry Sensor"
+      "sensor_name": "KSIC Silk Sensor"
     },
     {
       "id": "ind-8",
-      "name": "Pharmaceutical Plant",
+      "name": "Reid and Taylor Mysuru Mill",
+      "data_key": "Pharmaceutical Plant",
       "sector": "Pharma",
       "lat": 12.2871,
       "lng": 76.7008,
-      "sensor_name": "Pharmaceutical Plant Sensor"
+      "sensor_name": "Reid and Taylor Sensor"
     },
     {
       "id": "ind-9",
-      "name": "Paper Mill",
+      "name": "SKF Technologies Mysuru",
+      "data_key": "Paper Mill",
       "sector": "Paper",
       "lat": 12.2479,
       "lng": 76.6128,
-      "sensor_name": "Paper Mill Sensor"
+      "sensor_name": "SKF Mysuru Sensor"
     },
     {
       "id": "ind-10",
-      "name": "Food Processing Unit",
+      "name": "Government Sandalwood Oil Factory",
+      "data_key": "Food Processing Unit",
       "sector": "Food",
       "lat": 12.3275,
       "lng": 76.5944,
-      "sensor_name": "Food Processing Unit Sensor"
+      "sensor_name": "Sandalwood Oil Factory Sensor"
     }
   ],
   "public_areas": [

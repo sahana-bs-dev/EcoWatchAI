@@ -94,6 +94,11 @@ body::before {
     padding: 1.7rem;
 }
 
+.live-search-stack {
+    position: relative;
+    margin-top: 0.85rem;
+}
+
 .analyze-row {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
@@ -149,6 +154,33 @@ body::before {
     color: var(--muted);
     font-size: 0.98rem;
     line-height: 1.5;
+}
+
+.search-results {
+    position: absolute;
+    top: calc(100% + 0.4rem);
+    left: 0;
+    right: 0;
+    z-index: 50;
+    display: grid;
+    gap: 0.45rem;
+}
+
+.search-result-btn {
+    width: 100%;
+    text-align: left;
+    padding: 0.85rem 1rem;
+    border-radius: 1.1rem;
+    border: 1px solid rgba(45, 67, 46, 0.1);
+    background: rgba(255, 252, 245, 0.98);
+    color: var(--text);
+    cursor: pointer;
+    box-shadow: 0 14px 20px rgba(67, 77, 53, 0.08);
+}
+
+.search-result-btn strong {
+    display: block;
+    margin-bottom: 0.2rem;
 }
 
 .control-grid {

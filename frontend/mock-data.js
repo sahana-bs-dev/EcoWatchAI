@@ -27,28 +27,28 @@ window.ECOWATCH_DEMO = {
         { timestamp: "2026-04-01T22:00:00", aqi: 211, co2: 179, so2: 62, no2: 47, pm25: 83, pm10: 128 }
     ],
     heatmap: [
-        { type: "Feature", geometry: { type: "Point", coordinates: [76.6762, 12.3321] }, properties: { name: "ABC Steel Plant", aqi: 241, level: "High", intensity: 0.8 } },
-        { type: "Feature", geometry: { type: "Point", coordinates: [76.6581, 12.3194] }, properties: { name: "Green Cement Works", aqi: 198, level: "Moderate", intensity: 0.66 } },
-        { type: "Feature", geometry: { type: "Point", coordinates: [76.6893, 12.3126] }, properties: { name: "Chemical Plant", aqi: 233, level: "High", intensity: 0.78 } },
-        { type: "Feature", geometry: { type: "Point", coordinates: [76.6885, 12.2638] }, properties: { name: "Thermal Power Plant", aqi: 238, level: "High", intensity: 0.79 } },
-        { type: "Feature", geometry: { type: "Point", coordinates: [76.6468, 12.2529] }, properties: { name: "Oil Refinery", aqi: 214, level: "High", intensity: 0.71 } },
-        { type: "Feature", geometry: { type: "Point", coordinates: [76.6161, 12.3382] }, properties: { name: "Textile Industry", aqi: 154, level: "Moderate", intensity: 0.51 } },
-        { type: "Feature", geometry: { type: "Point", coordinates: [76.6657, 12.3444] }, properties: { name: "Mining Industry", aqi: 193, level: "Moderate", intensity: 0.64 } },
-        { type: "Feature", geometry: { type: "Point", coordinates: [76.7008, 12.2871] }, properties: { name: "Pharmaceutical Plant", aqi: 169, level: "Moderate", intensity: 0.56 } },
-        { type: "Feature", geometry: { type: "Point", coordinates: [76.6128, 12.2479] }, properties: { name: "Paper Mill", aqi: 161, level: "Moderate", intensity: 0.54 } },
-        { type: "Feature", geometry: { type: "Point", coordinates: [76.5944, 12.3275] }, properties: { name: "Food Processing Unit", aqi: 126, level: "Moderate", intensity: 0.42 } }
+        { type: "Feature", geometry: { type: "Point", coordinates: [76.6762, 12.3321] }, properties: { name: "JK Tyre Mysuru Plant", aqi: 241, level: "High", intensity: 0.8 } },
+        { type: "Feature", geometry: { type: "Point", coordinates: [76.6581, 12.3194] }, properties: { name: "Nestle India Nanjangud Plant", aqi: 198, level: "Moderate", intensity: 0.66 } },
+        { type: "Feature", geometry: { type: "Point", coordinates: [76.6893, 12.3126] }, properties: { name: "AT&S India Nanjangud", aqi: 233, level: "High", intensity: 0.78 } },
+        { type: "Feature", geometry: { type: "Point", coordinates: [76.6885, 12.2638] }, properties: { name: "Asian Paints Mysuru Plant", aqi: 238, level: "High", intensity: 0.79 } },
+        { type: "Feature", geometry: { type: "Point", coordinates: [76.6468, 12.2529] }, properties: { name: "Hitachi Energy Mysuru Facility", aqi: 214, level: "High", intensity: 0.71 } },
+        { type: "Feature", geometry: { type: "Point", coordinates: [76.6161, 12.3382] }, properties: { name: "Jubilant Biosys Nanjangud Facility", aqi: 154, level: "Moderate", intensity: 0.51 } },
+        { type: "Feature", geometry: { type: "Point", coordinates: [76.6657, 12.3444] }, properties: { name: "KSIC Silk Weaving Factory", aqi: 193, level: "Moderate", intensity: 0.64 } },
+        { type: "Feature", geometry: { type: "Point", coordinates: [76.7008, 12.2871] }, properties: { name: "Reid and Taylor Mysuru Mill", aqi: 169, level: "Moderate", intensity: 0.56 } },
+        { type: "Feature", geometry: { type: "Point", coordinates: [76.6128, 12.2479] }, properties: { name: "SKF Technologies Mysuru", aqi: 161, level: "Moderate", intensity: 0.54 } },
+        { type: "Feature", geometry: { type: "Point", coordinates: [76.5944, 12.3275] }, properties: { name: "Government Sandalwood Oil Factory", aqi: 126, level: "Moderate", intensity: 0.42 } }
     ],
     industries: [
-        { id: "ind-1", name: "ABC Steel Plant", sector: "Steel", lat: 12.3321, lng: 76.6762, sensor_name: "ABC Steel Plant Sensor" },
-        { id: "ind-2", name: "Green Cement Works", sector: "Cement", lat: 12.3194, lng: 76.6581, sensor_name: "Green Cement Works Sensor" },
-        { id: "ind-3", name: "Chemical Plant", sector: "Chemicals", lat: 12.3126, lng: 76.6893, sensor_name: "Chemical Plant Sensor" },
-        { id: "ind-4", name: "Thermal Power Plant", sector: "Power", lat: 12.2638, lng: 76.6885, sensor_name: "Thermal Power Plant Sensor" },
-        { id: "ind-5", name: "Oil Refinery", sector: "Energy", lat: 12.2529, lng: 76.6468, sensor_name: "Oil Refinery Sensor" },
-        { id: "ind-6", name: "Textile Industry", sector: "Textile", lat: 12.3382, lng: 76.6161, sensor_name: "Textile Industry Sensor" },
-        { id: "ind-7", name: "Mining Industry", sector: "Mining", lat: 12.3444, lng: 76.6657, sensor_name: "Mining Industry Sensor" },
-        { id: "ind-8", name: "Pharmaceutical Plant", sector: "Pharma", lat: 12.2871, lng: 76.7008, sensor_name: "Pharmaceutical Plant Sensor" },
-        { id: "ind-9", name: "Paper Mill", sector: "Paper", lat: 12.2479, lng: 76.6128, sensor_name: "Paper Mill Sensor" },
-        { id: "ind-10", name: "Food Processing Unit", sector: "Food", lat: 12.3275, lng: 76.5944, sensor_name: "Food Processing Unit Sensor" }
+        { id: "ind-1", name: "JK Tyre Mysuru Plant", sector: "Steel", lat: 12.3321, lng: 76.6762, sensor_name: "JK Tyre Mysuru Sensor" },
+        { id: "ind-2", name: "Nestle India Nanjangud Plant", sector: "Cement", lat: 12.3194, lng: 76.6581, sensor_name: "Nestle Nanjangud Sensor" },
+        { id: "ind-3", name: "AT&S India Nanjangud", sector: "Chemicals", lat: 12.3126, lng: 76.6893, sensor_name: "AT&S Nanjangud Sensor" },
+        { id: "ind-4", name: "Asian Paints Mysuru Plant", sector: "Power", lat: 12.2638, lng: 76.6885, sensor_name: "Asian Paints Mysuru Sensor" },
+        { id: "ind-5", name: "Hitachi Energy Mysuru Facility", sector: "Energy", lat: 12.2529, lng: 76.6468, sensor_name: "Hitachi Energy Mysuru Sensor" },
+        { id: "ind-6", name: "Jubilant Biosys Nanjangud Facility", sector: "Textile", lat: 12.3382, lng: 76.6161, sensor_name: "Jubilant Nanjangud Sensor" },
+        { id: "ind-7", name: "KSIC Silk Weaving Factory", sector: "Mining", lat: 12.3444, lng: 76.6657, sensor_name: "KSIC Silk Sensor" },
+        { id: "ind-8", name: "Reid and Taylor Mysuru Mill", sector: "Pharma", lat: 12.2871, lng: 76.7008, sensor_name: "Reid and Taylor Sensor" },
+        { id: "ind-9", name: "SKF Technologies Mysuru", sector: "Paper", lat: 12.2479, lng: 76.6128, sensor_name: "SKF Mysuru Sensor" },
+        { id: "ind-10", name: "Government Sandalwood Oil Factory", sector: "Food", lat: 12.3275, lng: 76.5944, sensor_name: "Sandalwood Oil Factory Sensor" }
     ],
     public_areas: [
         { name: "Residential Area", type: "Residential", lat: 12.3074, lng: 76.6402, population: 24000 },
@@ -74,26 +74,26 @@ window.ECOWATCH_DEMO = {
     network: {
         nodes: [
             { id: "station", label: "Central Monitoring Station", group: "station", title: "Central Monitoring Station" },
-            { id: "ind-1", label: "ABC Steel Plant", group: "industry", title: "Steel" },
-            { id: "ind-1-sensor", label: "ABC Steel Plant Sensor", group: "sensor", title: "Emission Sensor Node" },
-            { id: "ind-2", label: "Green Cement Works", group: "industry", title: "Cement" },
-            { id: "ind-2-sensor", label: "Green Cement Works Sensor", group: "sensor", title: "Emission Sensor Node" },
-            { id: "ind-3", label: "Chemical Plant", group: "industry", title: "Chemicals" },
-            { id: "ind-3-sensor", label: "Chemical Plant Sensor", group: "sensor", title: "Emission Sensor Node" },
-            { id: "ind-4", label: "Thermal Power Plant", group: "industry", title: "Power" },
-            { id: "ind-4-sensor", label: "Thermal Power Plant Sensor", group: "sensor", title: "Emission Sensor Node" },
-            { id: "ind-5", label: "Oil Refinery", group: "industry", title: "Energy" },
-            { id: "ind-5-sensor", label: "Oil Refinery Sensor", group: "sensor", title: "Emission Sensor Node" },
-            { id: "ind-6", label: "Textile Industry", group: "industry", title: "Textile" },
-            { id: "ind-6-sensor", label: "Textile Industry Sensor", group: "sensor", title: "Emission Sensor Node" },
-            { id: "ind-7", label: "Mining Industry", group: "industry", title: "Mining" },
-            { id: "ind-7-sensor", label: "Mining Industry Sensor", group: "sensor", title: "Emission Sensor Node" },
-            { id: "ind-8", label: "Pharmaceutical Plant", group: "industry", title: "Pharma" },
-            { id: "ind-8-sensor", label: "Pharmaceutical Plant Sensor", group: "sensor", title: "Emission Sensor Node" },
-            { id: "ind-9", label: "Paper Mill", group: "industry", title: "Paper" },
-            { id: "ind-9-sensor", label: "Paper Mill Sensor", group: "sensor", title: "Emission Sensor Node" },
-            { id: "ind-10", label: "Food Processing Unit", group: "industry", title: "Food" },
-            { id: "ind-10-sensor", label: "Food Processing Unit Sensor", group: "sensor", title: "Emission Sensor Node" }
+            { id: "ind-1", label: "JK Tyre Mysuru Plant", group: "industry", title: "Steel" },
+            { id: "ind-1-sensor", label: "JK Tyre Mysuru Sensor", group: "sensor", title: "Emission Sensor Node" },
+            { id: "ind-2", label: "Nestle India Nanjangud Plant", group: "industry", title: "Cement" },
+            { id: "ind-2-sensor", label: "Nestle Nanjangud Sensor", group: "sensor", title: "Emission Sensor Node" },
+            { id: "ind-3", label: "AT&S India Nanjangud", group: "industry", title: "Chemicals" },
+            { id: "ind-3-sensor", label: "AT&S Nanjangud Sensor", group: "sensor", title: "Emission Sensor Node" },
+            { id: "ind-4", label: "Asian Paints Mysuru Plant", group: "industry", title: "Power" },
+            { id: "ind-4-sensor", label: "Asian Paints Mysuru Sensor", group: "sensor", title: "Emission Sensor Node" },
+            { id: "ind-5", label: "Hitachi Energy Mysuru Facility", group: "industry", title: "Energy" },
+            { id: "ind-5-sensor", label: "Hitachi Energy Mysuru Sensor", group: "sensor", title: "Emission Sensor Node" },
+            { id: "ind-6", label: "Jubilant Biosys Nanjangud Facility", group: "industry", title: "Textile" },
+            { id: "ind-6-sensor", label: "Jubilant Nanjangud Sensor", group: "sensor", title: "Emission Sensor Node" },
+            { id: "ind-7", label: "KSIC Silk Weaving Factory", group: "industry", title: "Mining" },
+            { id: "ind-7-sensor", label: "KSIC Silk Sensor", group: "sensor", title: "Emission Sensor Node" },
+            { id: "ind-8", label: "Reid and Taylor Mysuru Mill", group: "industry", title: "Pharma" },
+            { id: "ind-8-sensor", label: "Reid and Taylor Sensor", group: "sensor", title: "Emission Sensor Node" },
+            { id: "ind-9", label: "SKF Technologies Mysuru", group: "industry", title: "Paper" },
+            { id: "ind-9-sensor", label: "SKF Mysuru Sensor", group: "sensor", title: "Emission Sensor Node" },
+            { id: "ind-10", label: "Government Sandalwood Oil Factory", group: "industry", title: "Food" },
+            { id: "ind-10-sensor", label: "Sandalwood Oil Factory Sensor", group: "sensor", title: "Emission Sensor Node" }
         ],
         edges: [
             { from: "ind-1", to: "ind-1-sensor" }, { from: "ind-1-sensor", to: "station" },
@@ -109,13 +109,13 @@ window.ECOWATCH_DEMO = {
         ]
     },
     nearby_industries: [
-        { name: "ABC Steel Plant", distance_km: 2.4, aqi: 241, pollution_level: "High", compliance: "Violation" },
-        { name: "Thermal Power Plant", distance_km: 4.9, aqi: 238, pollution_level: "High", compliance: "Violation" },
-        { name: "Chemical Plant", distance_km: 5.8, aqi: 233, pollution_level: "High", compliance: "Violation" },
-        { name: "Oil Refinery", distance_km: 3.1, aqi: 214, pollution_level: "High", compliance: "Violation" },
-        { name: "Green Cement Works", distance_km: 1.8, aqi: 198, pollution_level: "Moderate", compliance: "Warning" }
+        { name: "JK Tyre Mysuru Plant", distance_km: 2.4, aqi: 241, pollution_level: "High", compliance: "Violation" },
+        { name: "Asian Paints Mysuru Plant", distance_km: 4.9, aqi: 238, pollution_level: "High", compliance: "Violation" },
+        { name: "AT&S India Nanjangud", distance_km: 5.8, aqi: 233, pollution_level: "High", compliance: "Violation" },
+        { name: "Hitachi Energy Mysuru Facility", distance_km: 3.1, aqi: 214, pollution_level: "High", compliance: "Violation" },
+        { name: "Nestle India Nanjangud Plant", distance_km: 1.8, aqi: 198, pollution_level: "Moderate", compliance: "Warning" }
     ],
-    highest_polluter: { name: "ABC Steel Plant", aqi: 241, compliance: "Violation", status: "High" },
+    highest_polluter: { name: "JK Tyre Mysuru Plant", aqi: 241, compliance: "Violation", status: "High" },
     pollution_spread: [
         { distance_km: 0, impact_percent: 100, estimated_aqi: 241 },
         { distance_km: 2, impact_percent: 70, estimated_aqi: 168.7 },
@@ -129,26 +129,26 @@ window.ECOWATCH_DEMO = {
         "Issue public alerts for nearby schools, hospitals, and houses."
     ],
     ranking: [
-        { name: "ABC Steel Plant", aqi: 241, compliance: "Violation", status: "High" },
-        { name: "Thermal Power Plant", aqi: 238, compliance: "Violation", status: "High" },
-        { name: "Chemical Plant", aqi: 233, compliance: "Violation", status: "High" },
-        { name: "Oil Refinery", aqi: 214, compliance: "Violation", status: "High" },
-        { name: "Green Cement Works", aqi: 198, compliance: "Warning", status: "Moderate" }
+        { name: "JK Tyre Mysuru Plant", aqi: 241, compliance: "Violation", status: "High" },
+        { name: "Asian Paints Mysuru Plant", aqi: 238, compliance: "Violation", status: "High" },
+        { name: "AT&S India Nanjangud", aqi: 233, compliance: "Violation", status: "High" },
+        { name: "Hitachi Energy Mysuru Facility", aqi: 214, compliance: "Violation", status: "High" },
+        { name: "Nestle India Nanjangud Plant", aqi: 198, compliance: "Warning", status: "Moderate" }
     ],
     compliance: [
-        { name: "ABC Steel Plant", status: "Violation", aqi: 241 },
-        { name: "Thermal Power Plant", status: "Violation", aqi: 238 },
-        { name: "Chemical Plant", status: "Violation", aqi: 233 },
-        { name: "Oil Refinery", status: "Violation", aqi: 214 },
-        { name: "Green Cement Works", status: "Warning", aqi: 198 },
-        { name: "Mining Industry", status: "Warning", aqi: 193 },
-        { name: "Pharmaceutical Plant", status: "Warning", aqi: 169 },
-        { name: "Paper Mill", status: "Warning", aqi: 161 },
-        { name: "Textile Industry", status: "Warning", aqi: 154 },
-        { name: "Food Processing Unit", status: "Compliant", aqi: 126 }
+        { name: "JK Tyre Mysuru Plant", status: "Violation", aqi: 241 },
+        { name: "Asian Paints Mysuru Plant", status: "Violation", aqi: 238 },
+        { name: "AT&S India Nanjangud", status: "Violation", aqi: 233 },
+        { name: "Hitachi Energy Mysuru Facility", status: "Violation", aqi: 214 },
+        { name: "Nestle India Nanjangud Plant", status: "Warning", aqi: 198 },
+        { name: "KSIC Silk Weaving Factory", status: "Warning", aqi: 193 },
+        { name: "Reid and Taylor Mysuru Mill", status: "Warning", aqi: 169 },
+        { name: "SKF Technologies Mysuru", status: "Warning", aqi: 161 },
+        { name: "Jubilant Biosys Nanjangud Facility", status: "Warning", aqi: 154 },
+        { name: "Government Sandalwood Oil Factory", status: "Compliant", aqi: 126 }
     ],
     alerts: [
-        "High pollution near ABC Steel Plant",
+        "High pollution near JK Tyre Mysuru Plant",
         "AQI will exceed 250 soon"
     ],
     impact_analysis: [
@@ -171,19 +171,19 @@ window.ECOWATCH_DEMO_RAG = [
     {
         title: "Steel Plant Emission Controls",
         category: "mitigation",
-        industry: "ABC Steel Plant",
+        industry: "JK Tyre Mysuru Plant",
         content: "Steel facilities with elevated PM10 and SO2 should inspect bag filters, sinter dust capture systems, reduce furnace throughput during peaks, and increase dust suppression on material handling routes."
     },
     {
         title: "Thermal Power Plant Guidance",
         category: "mitigation",
-        industry: "Thermal Power Plant",
+        industry: "Asian Paints Mysuru Plant",
         content: "Thermal power units showing high SO2 should prioritize flue gas desulfurization checks, fuel sulfur review, combustion optimization, and output curtailment when predictive AQI remains elevated."
     },
     {
         title: "Chemical Plant Anomaly Review",
         category: "investigation",
-        industry: "Chemical Plant",
+        industry: "AT&S India Nanjangud",
         content: "Chemical facilities with anomaly spikes should inspect vent scrubbers, fugitive leak points, storage transfer events, and emergency flaring logs before normal operations resume."
     },
     {

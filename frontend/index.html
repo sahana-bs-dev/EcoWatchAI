@@ -46,12 +46,16 @@
 
                 <section class="control-card panel-card">
                     <p class="panel-kicker">Location</p>
+                    <div class="live-search-stack">
+                        <input id="placeSearchInput" class="form-input hero-select" type="text" placeholder="Search Mysore localities like Metagalli, Hebbal, Kuvempunagar">
+                        <div id="placeSearchResults" class="search-results"></div>
+                    </div>
                     <div class="analyze-row">
                         <select id="locationSelect" class="form-input hero-select"></select>
                         <button id="analyzeBtn" class="analyze-btn" type="button">Analyze</button>
                     </div>
                     <p class="helper-copy">
-                        Use a suggested dummy location or click the map to inspect another zone.
+                        Search a real Mysore locality or choose a map entity below. AQI comes from live area coordinates when the backend is running.
                     </p>
                     <div class="control-grid">
                         <div>

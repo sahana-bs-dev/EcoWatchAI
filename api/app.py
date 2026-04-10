@@ -21,16 +21,20 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 
 BASE_DIR = Path(__file__).resolve().parent
-DATA_DIR = BASE_DIR / "data"
+PROJECT_DIR = BASE_DIR.parent
+DATA_DIR = PROJECT_DIR / "backend" / "data"
 EMISSIONS_FILE = DATA_DIR / "emissions_history.json"
 LOCATIONS_FILE = DATA_DIR / "locations.json"
 KNOWLEDGE_FILE = DATA_DIR / "knowledge_base.json"
 OPENWEATHER_BASE_URL = "https://api.openweathermap.org/data/2.5"
+OVERPASS_API_URL = "https://overpass-api.de/api/interpreter"
+NOMINATIM_SEARCH_URL = "https://nominatim.openstreetmap.org/search"
 MYSORE_CENTER = {"lat": 12.2958, "lng": 76.6394, "name": "Mysore, Karnataka"}
+CITY_ENTITY_RADIUS_KM = 18
 
 
 def load_env_file() -> None:
-    env_path = BASE_DIR / ".env"
+    env_path = PROJECT_DIR / "backend" / ".env"
     if not env_path.exists():
         return
     for line in env_path.read_text(encoding="utf-8").splitlines():
@@ -58,6 +62,55 @@ def fetch_remote_json(base_url: str, params: dict[str, Any]) -> Any:
     query = urlencode(params)
     with urlopen(f"{base_url}?{query}", timeout=10) as response:
         return json.loads(response.read().decode("utf-8"))
+
+
+def fetch_remote_raw(base_url: str, params: dict[str, Any]) -> Any:
+    query = urlencode(params)
+    request_url = f"{base_url}?{query}"
+    request = __import__("urllib.request").request.Request(
+        request_url,
+        headers={"User-Agent": "EcoWatchAI/1.0"},
+    )
+    with urlopen(request, timeout=15) as response:
+        return json.loads(response.read().decode("utf-8"))
+
+
+def fetch_place_suggestions(query: str, city_hint: str = "Mysore, Karnataka, India") -> list[dict[str, Any]]:
+    cleaned = query.strip()
+    if not cleaned:
+        return []
+
+    try:
+        results = fetch_remote_raw(
+            NOMINATIM_SEARCH_URL,
+            {
+                "q": f"{cleaned}, {city_hint}",
+                "format": "jsonv2",
+                "limit": 8,
+                "addressdetails": 1,
+            },
+        )
+    except Exception:
+        return []
+
+    suggestions = []
+    seen = set()
+    for item in results:
+        display_name = item.get("display_name", "")
+        key = (item.get("lat"), item.get("lon"), display_name)
+        if key in seen:
+            continue
+        seen.add(key)
+        suggestions.append(
+            {
+                "name": display_name.split(",")[0],
+                "display_name": display_name,
+                "lat": float(item["lat"]),
+                "lng": float(item["lon"]),
+                "type": item.get("type", "place"),
+            }
+        )
+    return suggestions
 
 
 EMISSIONS_DATA = load_json(EMISSIONS_FILE)
@@ -195,7 +248,7 @@ def build_heatmap_points() -> list[dict[str, Any]]:
     snapshot = latest_industry_snapshot()
     points = []
     for industry in INDUSTRIES:
-        row = snapshot[industry["name"]]
+        row = snapshot[industry.get("data_key", industry["name"])]
         points.append(
             {
                 "type": "Feature",
@@ -279,7 +332,7 @@ def nearest_industries(lat: float, lng: float, radius_km: float) -> list[dict[st
     for industry in INDUSTRIES:
         distance = haversine_km(lat, lng, industry["lat"], industry["lng"])
         if distance <= radius_km:
-            row = snapshot[industry["name"]]
+            row = snapshot[industry.get("data_key", industry["name"])]
             nearby.append(
                 {
                     "name": industry["name"],
@@ -295,20 +348,7 @@ def nearest_industries(lat: float, lng: float, radius_km: float) -> list[dict[st
 
 
 def affected_zones(lat: float, lng: float, radius_km: float) -> list[dict[str, Any]]:
-    zones = []
-    for area in PUBLIC_AREAS:
-        distance = haversine_km(lat, lng, area["lat"], area["lng"])
-        if distance <= radius_km:
-            zones.append(
-                {
-                    "name": area["name"],
-                    "type": area["type"],
-                    "distance_km": round(distance, 2),
-                    "population": area["population"],
-                }
-            )
-    zones.sort(key=lambda item: item["distance_km"])
-    return zones
+    return affected_zones_from_areas(PUBLIC_AREAS, lat, lng, radius_km)
 
 
 def pollution_spread(source_aqi: float) -> list[dict[str, Any]]:
@@ -324,7 +364,7 @@ def ranking() -> list[dict[str, Any]]:
     snapshot = latest_industry_snapshot()
     ordered = []
     for industry in INDUSTRIES:
-        row = snapshot[industry["name"]]
+        row = snapshot[industry.get("data_key", industry["name"])]
         ordered.append(
             {
                 "name": industry["name"],
@@ -338,6 +378,10 @@ def ranking() -> list[dict[str, Any]]:
 
 
 def build_network() -> dict[str, Any]:
+    return build_network_from_industries(INDUSTRIES)
+
+
+def build_network_from_industries(industry_list: list[dict[str, Any]]) -> dict[str, Any]:
     nodes = []
     edges = []
 
@@ -350,7 +394,7 @@ def build_network() -> dict[str, Any]:
         }
     )
 
-    for industry in INDUSTRIES:
+    for industry in industry_list:
         industry_id = industry["id"]
         sensor_id = f"{industry_id}-sensor"
         nodes.append(
@@ -373,6 +417,181 @@ def build_network() -> dict[str, Any]:
         edges.append({"from": sensor_id, "to": "station"})
 
     return {"nodes": nodes, "edges": edges}
+
+
+def estimate_industry_risk_score(
+    live_aqi: float,
+    distance_km: float,
+    tags: dict[str, Any],
+) -> float:
+    name_blob = " ".join(str(value).lower() for value in tags.values())
+    sector_weight = 1.0
+    if any(keyword in name_blob for keyword in ["chemical", "paint", "tyre", "steel", "cement", "power", "energy", "refinery"]):
+        sector_weight = 1.18
+    elif any(keyword in name_blob for keyword in ["food", "packaging", "textile", "silk"]):
+        sector_weight = 0.9
+
+    distance_weight = max(0.35, 1.4 - (distance_km / 10))
+    return round(live_aqi * sector_weight * distance_weight, 2)
+
+
+def fetch_live_industries(lat: float, lng: float, radius_km: float, live_aqi: float) -> list[dict[str, Any]]:
+    radius_m = int(radius_km * 1000)
+    overpass_query = f"""
+    [out:json][timeout:12];
+    (
+      node(around:{radius_m},{lat},{lng})["man_made"="works"];
+      way(around:{radius_m},{lat},{lng})["man_made"="works"];
+      relation(around:{radius_m},{lat},{lng})["man_made"="works"];
+      node(around:{radius_m},{lat},{lng})["landuse"="industrial"];
+      way(around:{radius_m},{lat},{lng})["landuse"="industrial"];
+      relation(around:{radius_m},{lat},{lng})["landuse"="industrial"];
+      node(around:{radius_m},{lat},{lng})["industrial"];
+      way(around:{radius_m},{lat},{lng})["industrial"];
+      relation(around:{radius_m},{lat},{lng})["industrial"];
+      node(around:{radius_m},{lat},{lng})["office"="company"];
+      way(around:{radius_m},{lat},{lng})["office"="company"];
+      relation(around:{radius_m},{lat},{lng})["office"="company"];
+    );
+    out center tags;
+    """
+
+    try:
+        payload = fetch_remote_raw(OVERPASS_API_URL, {"data": overpass_query})
+    except Exception:
+        return []
+
+    seen_names: set[str] = set()
+    industries: list[dict[str, Any]] = []
+    for element in payload.get("elements", []):
+        tags = element.get("tags", {})
+        name = tags.get("name")
+        if not name or name in seen_names:
+            continue
+
+        element_lat = element.get("lat") or element.get("center", {}).get("lat")
+        element_lng = element.get("lon") or element.get("center", {}).get("lon")
+        if element_lat is None or element_lng is None:
+            continue
+
+        distance = haversine_km(lat, lng, element_lat, element_lng)
+        if distance > radius_km:
+            continue
+
+        seen_names.add(name)
+        estimated_aqi = estimate_industry_risk_score(live_aqi, distance, tags)
+        industries.append(
+            {
+                "id": f"osm-{element.get('type', 'node')}-{element.get('id')}",
+                "name": name,
+                "lat": element_lat,
+                "lng": element_lng,
+                "sector": tags.get("industrial") or tags.get("man_made") or tags.get("landuse") or "industrial",
+                "sensor_name": f"{name} Sensor",
+                "distance_km": round(distance, 2),
+                "aqi": estimated_aqi,
+                "pollution_level": normalize_pollution_level(estimated_aqi),
+                "compliance": compliance_status(estimated_aqi),
+                "source": "openstreetmap-overpass",
+                "estimated": True,
+            }
+        )
+
+    industries.sort(key=lambda item: item["aqi"], reverse=True)
+    return industries[:10]
+
+
+def fetch_live_public_entities(lat: float, lng: float, radius_km: float) -> list[dict[str, Any]]:
+    radius_m = int(max(radius_km, CITY_ENTITY_RADIUS_KM) * 1000)
+    overpass_query = f"""
+    [out:json][timeout:14];
+    (
+      node(around:{radius_m},{lat},{lng})["amenity"~"hospital|clinic|college|university|school|marketplace|bus_station"];
+      way(around:{radius_m},{lat},{lng})["amenity"~"hospital|clinic|college|university|school|marketplace|bus_station"];
+      relation(around:{radius_m},{lat},{lng})["amenity"~"hospital|clinic|college|university|school|marketplace|bus_station"];
+      node(around:{radius_m},{lat},{lng})["leisure"="park"];
+      way(around:{radius_m},{lat},{lng})["leisure"="park"];
+      relation(around:{radius_m},{lat},{lng})["leisure"="park"];
+      node(around:{radius_m},{lat},{lng})["office"="government"];
+      way(around:{radius_m},{lat},{lng})["office"="government"];
+      relation(around:{radius_m},{lat},{lng})["office"="government"];
+      node(around:{radius_m},{lat},{lng})["railway"="station"];
+      way(around:{radius_m},{lat},{lng})["railway"="station"];
+      relation(around:{radius_m},{lat},{lng})["railway"="station"];
+    );
+    out center tags;
+    """
+
+    try:
+        payload = fetch_remote_raw(OVERPASS_API_URL, {"data": overpass_query})
+    except Exception:
+        return []
+
+    entities: list[dict[str, Any]] = []
+    seen_names: set[str] = set()
+    for element in payload.get("elements", []):
+        tags = element.get("tags", {})
+        name = tags.get("name")
+        if not name or name in seen_names:
+            continue
+
+        element_lat = element.get("lat") or element.get("center", {}).get("lat")
+        element_lng = element.get("lon") or element.get("center", {}).get("lon")
+        if element_lat is None or element_lng is None:
+            continue
+
+        distance = haversine_km(lat, lng, element_lat, element_lng)
+        seen_names.add(name)
+        entity_type = (
+            tags.get("amenity")
+            or tags.get("leisure")
+            or tags.get("office")
+            or tags.get("railway")
+            or "place"
+        )
+        population = 0
+        if entity_type in {"college", "university", "school"}:
+            population = 1500
+        elif entity_type in {"hospital", "clinic"}:
+            population = 2500
+        elif entity_type in {"marketplace", "bus_station", "station"}:
+            population = 5000
+        elif entity_type == "park":
+            population = 1000
+        else:
+            population = 2200
+
+        entities.append(
+            {
+                "name": name,
+                "type": entity_type.replace("_", " ").title(),
+                "lat": element_lat,
+                "lng": element_lng,
+                "distance_km": round(distance, 2),
+                "population": population,
+                "source": "openstreetmap-overpass",
+            }
+        )
+
+    entities.sort(key=lambda item: (item["type"], item["name"]))
+    return entities[:120]
+
+
+def affected_zones_from_areas(areas: list[dict[str, Any]], lat: float, lng: float, radius_km: float) -> list[dict[str, Any]]:
+    zones = []
+    for area in areas:
+        distance = haversine_km(lat, lng, area["lat"], area["lng"])
+        if distance <= radius_km:
+            zones.append(
+                {
+                    "name": area["name"],
+                    "type": area["type"],
+                    "distance_km": round(distance, 2),
+                    "population": area.get("population", 0),
+                }
+            )
+    zones.sort(key=lambda item: item["distance_km"])
+    return zones
 
 
 def openweather_band_to_aqi(band: int) -> int:
@@ -478,6 +697,15 @@ def health() -> Any:
     return jsonify({"status": "ok", "timestamp": datetime.utcnow().isoformat()})
 
 
+@app.get("/places")
+def places() -> Any:
+    query = request.args.get("query", "").strip()
+    city_hint = request.args.get("city", "Mysore, Karnataka, India").strip()
+    if not query:
+        return jsonify({"places": []})
+    return jsonify({"places": fetch_place_suggestions(query, city_hint)})
+
+
 @app.get("/dashboard-data")
 def dashboard_data() -> Any:
     center = LOCATION_DATA.get("map_center", MYSORE_CENTER)
@@ -491,10 +719,68 @@ def dashboard_data() -> Any:
     if live_environment:
         current.update(live_environment["pollutants"])
     predicted = predict_aqi_from_payload(current)
-    nearby = nearest_industries(lat, lng, radius_km)
-    impacted = affected_zones(lat, lng, radius_km)
-    ranked = ranking()
+    live_industries = fetch_live_industries(lat, lng, radius_km, current["aqi"])
+    use_live_industries = len(live_industries) > 0
+    nearby = live_industries if use_live_industries else nearest_industries(lat, lng, radius_km)
+    live_public_areas = fetch_live_public_entities(lat, lng, radius_km)
+    use_live_public_areas = len(live_public_areas) > 0
+    display_public_areas = live_public_areas if use_live_public_areas else PUBLIC_AREAS
+    impacted = affected_zones_from_areas(display_public_areas, lat, lng, radius_km)
+    ranked = (
+        [
+            {
+                "name": item["name"],
+                "aqi": item["aqi"],
+                "compliance": item["compliance"],
+                "status": item["pollution_level"],
+            }
+            for item in live_industries
+        ]
+        if use_live_industries
+        else ranking()
+    )
     highest = ranked[0]
+    display_industries = (
+        [
+            {
+                "id": item["id"],
+                "name": item["name"],
+                "sector": item["sector"],
+                "lat": item["lat"],
+                "lng": item["lng"],
+                "sensor_name": item["sensor_name"],
+            }
+            for item in live_industries
+        ]
+        if use_live_industries
+        else INDUSTRIES
+    )
+    display_network = (
+        build_network_from_industries(display_industries)
+        if use_live_industries
+        else build_network()
+    )
+    display_heatmap = (
+        [
+            {
+                "type": "Feature",
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [item["lng"], item["lat"]],
+                },
+                "properties": {
+                    "name": item["name"],
+                    "aqi": item["aqi"],
+                    "level": item["pollution_level"],
+                    "intensity": min(1, item["aqi"] / 300),
+                    "estimated": True,
+                },
+            }
+            for item in live_industries
+        ]
+        if use_live_industries
+        else build_heatmap_points()
+    )
 
     return jsonify(
         {
@@ -509,11 +795,11 @@ def dashboard_data() -> Any:
             },
             "pollutants": current,
             "history": timeseries["history"][-12:],
-            "heatmap": build_heatmap_points(),
-            "industries": INDUSTRIES,
-            "public_areas": PUBLIC_AREAS,
+            "heatmap": display_heatmap,
+            "industries": display_industries,
+            "public_areas": display_public_areas,
             "roads": LOCATION_DATA["roads"],
-            "network": build_network(),
+            "network": display_network,
             "nearby_industries": nearby,
             "highest_polluter": highest,
             "pollution_spread": pollution_spread(highest["aqi"]),
@@ -537,6 +823,8 @@ def dashboard_data() -> Any:
             ],
             "impact_analysis": impacted,
             "live_environment": live_environment,
+            "industry_data_mode": "live_osm_estimated" if use_live_industries else "curated_demo",
+            "place_data_mode": "live_osm" if use_live_public_areas else "curated_demo",
             "rag_preview": retrieve_documents(
                 f"compliance and mitigation guidance for {highest['name']}",
                 highest["name"],

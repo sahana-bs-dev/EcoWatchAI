@@ -18,35 +18,35 @@
       "id": "steel-1",
       "title": "Steel Plant Emission Controls",
       "category": "mitigation",
-      "industry": "ABC Steel Plant",
+      "industry": "JK Tyre Mysuru Plant",
       "content": "Steel facilities with elevated PM10 and SO2 should inspect bag filters, sinter dust capture systems, and furnace ventilation. Recommended actions include filter replacement, reduced furnace throughput during peaks, and raw material dust suppression."
     },
     {
       "id": "power-1",
-      "title": "Thermal Power Plant Guidance",
+      "title": "Asian Paints Mysuru Guidance",
       "category": "mitigation",
-      "industry": "Thermal Power Plant",
+      "industry": "Asian Paints Mysuru Plant",
       "content": "Thermal power units showing high SO2 should prioritize flue gas desulfurization performance checks, fuel sulfur review, and combustion optimization. Output curtailment is recommended when predictive AQI remains elevated."
     },
     {
       "id": "chem-1",
-      "title": "Chemical Plant Anomaly Review",
+      "title": "AT&S Nanjangud Anomaly Review",
       "category": "investigation",
-      "industry": "Chemical Plant",
+      "industry": "AT&S India Nanjangud",
       "content": "Chemical facilities with anomaly spikes should inspect vent scrubbers, fugitive leak points, storage transfer events, and emergency flaring logs. Short spikes often indicate abnormal release windows or sensor excursions."
     },
     {
       "id": "refinery-1",
-      "title": "Oil Refinery Response",
+      "title": "Hitachi Energy Mysuru Response",
       "category": "mitigation",
-      "industry": "Oil Refinery",
+      "industry": "Hitachi Energy Mysuru Facility",
       "content": "Refineries with high AQI and hydrocarbon-related events should verify flare optimization, sulfur recovery performance, and leak detection rounds. Community-facing alerts should be issued when nearby healthcare or residential zones are affected."
     },
     {
       "id": "cement-1",
       "title": "Cement Works Dust Strategy",
       "category": "mitigation",
-      "industry": "Green Cement Works",
+      "industry": "Nestle India Nanjangud Plant",
       "content": "Cement plants should control clinker handling dust, inspect electrostatic precipitators, and reduce unloading during windy periods. PM2.5 and PM10 trends are the primary operational watch indicators."
     },
     {

@@ -13,6 +13,7 @@
     isDemoMode: false,
     selectedLat: null,
     selectedLng: null,
+    selectedPlaceName: "",
     radius: 10,
     map: null,
     leafletMap: null,
@@ -27,10 +28,13 @@
     stationMarker: null,
     selectionMarker: null,
     simulationTimer: null,
-    liveLabels: []
+    liveLabels: [],
+    placeSearchTimer: null
 };
 
 const elements = {
+    placeSearchInput: document.getElementById("placeSearchInput"),
+    placeSearchResults: document.getElementById("placeSearchResults"),
     locationSelect: document.getElementById("locationSelect"),
     analyzeBtn: document.getElementById("analyzeBtn"),
     radiusSelect: document.getElementById("radiusSelect"),
@@ -74,6 +78,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 function bindEvents() {
+    elements.placeSearchInput.addEventListener("input", onPlaceSearchInput);
     elements.radiusSelect.addEventListener("change", async (event) => {
         state.radius = Number(event.target.value);
         elements.radiusValue.textContent = `${state.radius} km`;
@@ -90,6 +95,7 @@ function bindEvents() {
         const [lat, lng] = elements.locationSelect.value.split(",").map(Number);
         state.selectedLat = lat;
         state.selectedLng = lng;
+        state.selectedPlaceName = elements.locationSelect.options[elements.locationSelect.selectedIndex]?.textContent || "";
         await loadDashboard();
     });
 
@@ -164,18 +170,53 @@ async function getDashboardData() {
 
 function populateLocationSelect(data) {
     const options = [
-        { label: "Selected inspection point", lat: data.selected_location.lat, lng: data.selected_location.lng },
-        ...data.public_areas.map((area) => ({ label: area.name, lat: area.lat, lng: area.lng }))
+        {
+            label: "Selected inspection point",
+            lat: data.selected_location.lat,
+            lng: data.selected_location.lng,
+            type: "Selected"
+        },
+        {
+            label: data.monitoring_station?.name || "Central Monitoring Station",
+            lat: data.monitoring_station?.lat || data.map_center.lat,
+            lng: data.monitoring_station?.lng || data.map_center.lng,
+            type: "Monitoring"
+        },
+        ...data.public_areas.map((area) => ({
+            label: area.name,
+            lat: area.lat,
+            lng: area.lng,
+            type: area.type || "Public Area"
+        })),
+        ...data.industries.map((industry) => ({
+            label: industry.name,
+            lat: industry.lat,
+            lng: industry.lng,
+            type: industry.sector || "Industry"
+        }))
     ];
 
+    const uniqueOptions = [];
+    const seen = new Set();
+    for (const option of options) {
+        const key = `${option.label}-${option.lat.toFixed(4)}-${option.lng.toFixed(4)}`;
+        if (seen.has(key)) continue;
+        seen.add(key);
+        uniqueOptions.push(option);
+    }
+
     const currentValue = `${data.selected_location.lat},${data.selected_location.lng}`;
-    elements.locationSelect.innerHTML = options
+    elements.locationSelect.innerHTML = uniqueOptions
         .map((option) => {
             const value = `${option.lat},${option.lng}`;
             const selected = value === currentValue ? "selected" : "";
-            return `<option value="${value}" ${selected}>${option.label}</option>`;
+            return `<option value="${value}" ${selected}>${option.label} (${option.type})</option>`;
         })
         .join("");
+
+    if (state.selectedPlaceName && elements.placeSearchInput && document.activeElement !== elements.placeSearchInput) {
+        elements.placeSearchInput.value = state.selectedPlaceName;
+    }
 }
 
 function renderDashboard(data) {
@@ -187,9 +228,13 @@ function renderDashboard(data) {
     elements.mapAqiValue.textContent = Math.round(data.aqi.value);
     elements.radiusValue.textContent = `${data.selected_location.radius_km} km`;
     elements.topPolluterValue.textContent = data.highest_polluter.name;
-    elements.selectedLocationText.textContent = `Lat ${data.selected_location.lat.toFixed(4)}, Lng ${data.selected_location.lng.toFixed(4)} within a ${data.selected_location.radius_km} km inspection radius.`;
+    const placeLabel = state.selectedPlaceName ? `${state.selectedPlaceName} | ` : "";
+    elements.selectedLocationText.textContent = `${placeLabel}Lat ${data.selected_location.lat.toFixed(4)}, Lng ${data.selected_location.lng.toFixed(4)} within a ${data.selected_location.radius_km} km inspection radius.`;
 
-    showBanner(data.alerts[0], data.alerts[1]);
+    const modeMeta = data.industry_data_mode === "live_osm_estimated" || data.place_data_mode === "live_osm"
+        ? "Live AQI + live Mysuru map entities from OSM"
+        : data.alerts[1];
+    showBanner(data.alerts[0], modeMeta);
     renderRecommendations(data.recommendations);
     renderNearbyIndustries(data.nearby_industries);
     renderCompliance(data.compliance);
@@ -218,7 +263,7 @@ function renderNearbyIndustries(items) {
                     <div class="industry-meta">
                         <p class="text-xs uppercase tracking-[0.2em] text-slate-400">${index === 0 ? "Highest polluter" : "Nearby industry"}</p>
                         <strong class="text-base">${item.name}</strong>
-                        <p class="mt-2 text-sm text-slate-500">${item.pollution_level} pollution | ${item.distance_km} km away</p>
+                        <p class="mt-2 text-sm text-slate-500">${item.pollution_level} pollution | ${item.distance_km} km away${item.estimated ? " | estimated risk" : ""}</p>
                     </div>
                     <span class="aqi-pill ${severityClass(item.pollution_level)}">${Math.round(item.aqi)} AQI</span>
                 </div>
@@ -902,6 +947,68 @@ function showBanner(primary, secondary) {
     elements.alertBannerMeta.textContent = secondary;
 }
 
+function onPlaceSearchInput(event) {
+    const query = event.target.value.trim();
+    if (state.placeSearchTimer) {
+        window.clearTimeout(state.placeSearchTimer);
+    }
+
+    if (!query) {
+        elements.placeSearchResults.innerHTML = "";
+        return;
+    }
+
+    state.placeSearchTimer = window.setTimeout(async () => {
+        await searchPlaces(query);
+    }, 250);
+}
+
+async function searchPlaces(query) {
+    if (!shouldUseRemoteApi()) {
+        elements.placeSearchResults.innerHTML = `<div class="source-card">Run the backend to search real Mysore localities.</div>`;
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/places?query=${encodeURIComponent(query)}&city=${encodeURIComponent("Mysore, Karnataka, India")}`);
+        if (!response.ok) throw new Error(`Place search failed with ${response.status}`);
+        const payload = await response.json();
+        renderPlaceSearchResults(payload.places || []);
+    } catch (error) {
+        console.error("Place search failed:", error);
+        elements.placeSearchResults.innerHTML = `<div class="source-card">Could not fetch live Mysore places right now.</div>`;
+    }
+}
+
+function renderPlaceSearchResults(places) {
+    if (!places.length) {
+        elements.placeSearchResults.innerHTML = `<div class="source-card">No Mysore locality match found.</div>`;
+        return;
+    }
+
+    elements.placeSearchResults.innerHTML = places
+        .map((place, index) => `
+            <button class="search-result-btn" type="button" data-index="${index}">
+                <strong>${escapeHtml(place.name)}</strong>
+                <span>${escapeHtml(place.display_name)}</span>
+            </button>
+        `)
+        .join("");
+
+    const buttons = elements.placeSearchResults.querySelectorAll(".search-result-btn");
+    buttons.forEach((button, index) => {
+        button.addEventListener("click", async () => {
+            const place = places[index];
+            state.selectedLat = place.lat;
+            state.selectedLng = place.lng;
+            state.selectedPlaceName = place.name;
+            elements.placeSearchInput.value = place.name;
+            elements.placeSearchResults.innerHTML = "";
+            await loadDashboard();
+        });
+    });
+}
+
 async function askRagQuestion() {
     const question = elements.ragQuestion.value.trim();
     if (!question) {
@@ -909,7 +1016,7 @@ async function askRagQuestion() {
         return;
     }
 
-    const focusIndustry = state.dashboard?.highest_polluter?.name || "ABC Steel Plant";
+    const focusIndustry = state.dashboard?.highest_polluter?.name || "JK Tyre Mysuru Plant";
     const aqi = state.dashboard?.aqi?.value || state.dashboard?.current?.aqi || 0;
 
     try {
@@ -1045,8 +1152,8 @@ function getDemoSimulationTick() {
         prediction,
         anomaly,
         alerts: anomaly.anomaly
-            ? ["High pollution near ABC Steel Plant", "AQI spike under investigation"]
-            : ["High pollution near ABC Steel Plant", "Real-time demo simulation active"],
+            ? ["High pollution near JK Tyre Mysuru Plant", "AQI spike under investigation"]
+            : ["High pollution near JK Tyre Mysuru Plant", "Real-time demo simulation active"],
         recommendations: pollutants.aqi >= 220
             ? [
                 "Reduce production during peak emission windows.",
